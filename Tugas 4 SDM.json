@@ -1,0 +1,287 @@
+{
+  "name": "Tugas 4 SDM",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "d55e10e1-c65a-43be-9473-01d8b63edf89",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [
+        496,
+        1296
+      ],
+      "webhookId": "sop-ai-agent",
+      "credentials": {
+        "telegramApi": {
+          "id": "7F3QHpvmxcywTZss",
+          "name": "Telegram account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "reimbursement",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "id": "9f85f9d8-8c61-46ec-866a-c321d51f700b"
+            },
+            {
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "cuti",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "id": "4ff122d8-3d13-4e8b-833b-31218f31e171"
+            },
+            {
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "lembur",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "id": "3e9c18c8-dc4a-4fca-9f00-65944a9f12e1"
+            },
+            {
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "asuransi",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "id": "c6e161b5-5131-40a5-b743-79c8f5ba4ae8"
+            },
+            {
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "alat kerja",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "id": "4e74832b-9091-449c-94de-807db9cd84f3"
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "8089daae-57bb-46fa-981a-1b06298d6ea6",
+      "name": "Filter Keyword SOP",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        752,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "❌ Maaf, format pertanyaan tidak dikenali.\n\nSilakan gunakan kata kunci berikut:\n- reimbursement\n- cuti\n- lembur\n- asuransi\n- alat kerja\n\nContoh:\nBagaimana prosedur cuti?",
+        "additionalFields": {}
+      },
+      "id": "ec830297-7eb6-4331-a27f-a7b17dd135ab",
+      "name": "False Output",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        880,
+        1424
+      ],
+      "webhookId": "68f38cfd-93e0-465d-b52f-080732ebfcac",
+      "credentials": {
+        "telegramApi": {
+          "id": "7F3QHpvmxcywTZss",
+          "name": "Telegram account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "Kamu adalah Asisten HR Virtual.\n\nATURAN KERAS:\n1. Kamu WAJIB menggunakan tool Google Sheets.\n2. Jangan menjawab tanpa mengambil data dari tool.\n3. Data memiliki kolom: Pertanyaan dan Jawaban.\n4. Cocokkan pertanyaan user dengan kolom Pertanyaan.\n5. Ambil Jawaban yang paling relevan.\n6. Jika tidak ditemukan, jawab:\nMaaf, informasi mengenai hal tersebut belum tersedia di database SOP kami. Silakan hubungi tim HR secara langsung.\n7. Gunakan bahasa Indonesia yang sopan.\n8. Jangan gunakan markdown.\n9. Akhiri dengan: Ada yang ingin ditanyakan lagi?"
+        }
+      },
+      "id": "8156ecd6-f9a5-42c3-921d-73393dc6a44f",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1024,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1HE_F1woFnbcqkQ6vw2Q18LXthNgF_-Ayc5zhV3rSKag",
+          "mode": "list",
+          "cachedResultName": " Data Pertanyaan untuk Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HE_F1woFnbcqkQ6vw2Q18LXthNgF_-Ayc5zhV3rSKag/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1448743983,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HE_F1woFnbcqkQ6vw2Q18LXthNgF_-Ayc5zhV3rSKag/edit#gid=1448743983"
+        },
+        "options": {}
+      },
+      "id": "1b38aff3-5e61-4dfb-a9e3-d7aa501b095c",
+      "name": "Google Sheets Data",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4,
+      "position": [
+        1232,
+        1520
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "vkU7Oh6d31hTEApY",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6694078886",
+        "text": "={{ $json.output || 'Maaf, terjadi kesalahan dalam memproses jawaban.' }}",
+        "additionalFields": {}
+      },
+      "id": "a8cdaa16-85d8-4387-83ae-20aa4b448615",
+      "name": "True Output",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        1280
+      ],
+      "webhookId": "a0cc9b26-c147-45b4-8477-9c865251f228",
+      "credentials": {
+        "telegramApi": {
+          "id": "7F3QHpvmxcywTZss",
+          "name": "Telegram account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        1552
+      ],
+      "id": "6d1acf1e-0940-4372-aca5-dd9e349db761",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EZ97Gqe4WnGpRSik",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter Keyword SOP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Keyword SOP": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "False Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "True Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c752267b-57f3-411f-a72c-2004b850cf10",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a8029a7adbdc0dbd60336a80f6905c6c6343c6a279cd22aaad11890dcf0bf2ab"
+  },
+  "id": "tT7ip67CcfHeqU5C",
+  "tags": []
+}
